@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS tasks;
-DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS lists;
+DROP TABLE IF EXISTS users;
+
 DROP TYPE IF EXISTS COLOR_ENUM;
 
 CREATE TYPE COLOR_ENUM AS ENUM ('red', 'green', 'blue', 'yellow', 'pink', 'orange', 'brown');
@@ -17,7 +18,8 @@ CREATE TABLE lists (
     name VARCHAR(100) NOT NULL,
     datable BOOLEAN NOT NULL,
     checkable BOOLEAN NOT NULL,
-    color COLOR_ENUM NOT NULL
+    color COLOR_ENUM NOT NULL,
+    id_user INTEGER REFERENCES users(id) NOT NULL
 );
 
 CREATE TABLE tasks (

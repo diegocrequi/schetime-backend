@@ -2,11 +2,11 @@ import { Request, Response } from 'express';
 import { QueryResult } from 'pg';
 import pool from '../database';
 import Task from '../classes/Task';
-import axios from 'axios';
 
 export const getTasks = async (req: Request, res: Response): Promise<Response> => {
     try {
-        const response: QueryResult = await pool.query("SELECT * FROM tasks");
+        const query: string = "SELECT * FROM tasks";
+        const response: QueryResult = await pool.query(query);
         return res.status(200).json(response.rows);
     } catch(e) {
         return res.status(500).json({message: "An internal error ocurred"});
