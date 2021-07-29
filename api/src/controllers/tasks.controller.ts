@@ -56,11 +56,10 @@ export const getTaskByListId = async (req: Request, res: Response): Promise<Resp
 
 export const createTask = async (req: Request, res: Response): Promise<Response> => {
     try {
-        const body = req.body;
-        const task: Task = new Task(body.content, body.is_checked, body.color, body.date, body.id_user, body.id_list);
+        const {content, is_checked, color, date, id_user, id_list} = req.body;
         const query: string = `INSERT INTO tasks (content, is_checked, color, date, id_user, id_list) VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING id, content, is_checked, color, date, id_user, id_list`;
-        const response: QueryResult = await pool.query(query, [task.content, task.is_checked, task.color, task.date, task.id_user, task.id_list]);
+        const response: QueryResult = await pool.query(query, [content, is_checked, color, date, id_user, id_list]);
         return res.status(201).json(response.rows[0]);
     } catch(e) {
         if(e.code === "22P02") // Data type error
@@ -75,10 +74,10 @@ export const updateTask = async (req: Request, res: Response): Promise<Response>
     try {
         const body = req.body;
         const id: number = Number(req.params.id);
-        const task: Task = new Task(body.content, body.is_checked, body.color, body.date, body.id_user, body.id_list, id);
+        const {content, is_checked, color, date, id_user, id_list} = req.body;
         const query: string = `UPDATE tasks SET content=$1, is_checked=$2, color=$3, date=$4, id_user=$5, id_list=$6 WHERE id=$7
             RETURNING id, content, is_checked, color, date, id_user, id_list`;
-        const response: QueryResult = await pool.query(query, [task.content, task.is_checked, task.color, task.date, task.id_user, task.id_list, task.id]);
+        const response: QueryResult = await pool.query(query, [content, is_checked, color, date, id_user, id_list, id]);
         return res.status(200).json(response.rows[0]);
     } catch(e) {
         if(e.code === "22P02") // Data type error
