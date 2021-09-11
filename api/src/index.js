@@ -3,6 +3,8 @@ const listsRouter = require('./routes/lists.router');
 const tasksRouter = require('./routes/tasks.router');
 const usersRouter = require('./routes/users.router');
 
+require("dotenv").config();
+
 const app = express();
 
 // Middleware
