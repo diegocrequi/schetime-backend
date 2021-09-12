@@ -4,11 +4,11 @@ const { authToken } = require('../utils/authUtils');
 
 const tasksRouter = Router();
 
-tasksRouter.get("/tasks/:id", getTaskById);
-tasksRouter.get("/tasks/user/:id_user", getTaskByUserId);
-tasksRouter.get("/tasks/list/:id_list", getTaskByListId);
-tasksRouter.post("/tasks", createTask);
-tasksRouter.put("/tasks/:id", updateTask);
-tasksRouter.delete("/tasks/:id", deleteTask);
+tasksRouter.get("/tasks/:id",authToken, getTaskById);
+tasksRouter.get("/tasks/user/:id_user",authToken, getTaskByUserId);
+tasksRouter.get("/tasks/list/:id_list",authToken, getTaskByListId);
+tasksRouter.post("/tasks", authToken, createTask);
+tasksRouter.put("/tasks/:id", authToken, updateTask);
+tasksRouter.delete("/tasks/:id", authToken, deleteTask);
 
 module.exports = tasksRouter;

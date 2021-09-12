@@ -1,0 +1,3 @@
+{
+    "setupFiles": ["./src/tests/setUpTests.js"]
+}
