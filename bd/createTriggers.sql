@@ -26,23 +26,23 @@ CREATE TRIGGER assing_color_to_task
 BEFORE INSERT OR UPDATE ON tasks
     FOR EACH ROW EXECUTE PROCEDURE assing_color_to_task();
 
-CREATE OR REPLACE FUNCTION username_uniqueness() RETURNS TRIGGER
-AS $username_uniqueness$
+CREATE OR REPLACE FUNCTION user_uniqueness() RETURNS TRIGGER
+AS $user_uniqueness$
     DECLARE
         user_count INTEGER;
     BEGIN
         IF NEW.id IS NOT NULL THEN
-            SELECT COUNT(id) INTO user_count FROM users WHERE username=NEW.username AND id!=NEW.id AND active=true;
+            SELECT COUNT(id) INTO user_count FROM users WHERE (username=NEW.username OR email=NEW.email) AND id!=NEW.id AND active=true;
         ELSE 
-            SELECT COUNT(id) INTO user_count FROM users WHERE username=NEW.username AND active=true;
+            SELECT COUNT(id) INTO user_count FROM users WHERE (username=NEW.username OR email=NEW.email) AND active=true;
         END IF;
             IF (user_count > 0) THEN
-                RAISE EXCEPTION 'Username duplicated';
+                RAISE EXCEPTION 'User data duplicated';
             END IF;
         RETURN NEW;
     END;
-$username_uniqueness$ LANGUAGE plpgsql;
+$user_uniqueness$ LANGUAGE plpgsql;
 
-CREATE TRIGGER username_uniqueness
+CREATE TRIGGER user_uniqueness
 BEFORE INSERT OR UPDATE ON users
-    FOR EACH ROW EXECUTE PROCEDURE username_uniqueness();
+    FOR EACH ROW EXECUTE PROCEDURE user_uniqueness();

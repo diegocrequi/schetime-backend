@@ -60,7 +60,7 @@ describe("SIGN UP", () => {
 
     test("Duplicated user", async () => {
         try {
-            await axios.post(`${url}/signup`, userTest);
+            await axios.post(`${url}/signup`, {...userTest});
         } catch(e) {
             expect(e.response.status).toBe(409);
         }
