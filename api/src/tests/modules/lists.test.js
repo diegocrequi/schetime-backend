@@ -1,5 +1,5 @@
 const axios = require("axios");
-const user = require("../setUpTests");
+const header = require("../setUpTests");
 
 const url = "http://localhost:3000/lists";
 
@@ -19,15 +19,22 @@ const newList = {
     id_user: 1
 };
 
-describe("GET LIST BY ID", (user) => {
+describe("GET LISTS", () => {
     test("Correct call", async () => {
-        const result = await axios.get(`${url}/1`);        
+        const result = await axios.get(`${url}`, header);        
+        expect(result.status).toBe(200);
+    });
+});
+
+describe("GET LIST BY ID", () => {
+    test("Correct call", async () => {
+        const result = await axios.get(`${url}/1`, header);        
         expect(result.status).toBe(200);
     });
     
     test("Wrong id type", async () => {
         try {
-            await axios.get(`${url}/a`);
+            await axios.get(`${url}/a`, header);
         } catch(e) {
             expect(e.response.status).toBe(400);
         }
@@ -35,58 +42,30 @@ describe("GET LIST BY ID", (user) => {
     
     test("Not existing id", async () => {
         try {
-            await axios.get(`${url}/-1`);
+            await axios.get(`${url}/-1`, header);
         } catch(e){
             expect(e.response.status).toBe(404);
         }        
     });
 });
 
-describe("GET LISTS BY USER ID", () => {
-    test("Correct call", async () => {
-        const result = await axios.get(`${url}/user/1`);        
-        expect(result.status).toBe(200);
-    });
-    
-    test("Wrong id type", async () => {
-        try {
-            await axios.get(`${url}/user/a`);
-        } catch(e) {
-            expect(e.response.status).toBe(400);
-        }
-    });
-    
-    test("Not existing id", async () => {
-        const result = await axios.get(`${url}/user/-1`);
-        expect(result.status).toBe(200);   
-    });
-});
-
 describe("CREATE LIST", () => {
     test("Correct call", async () => {
-        const result = await axios.post(`${url}`, list);
+        const result = await axios.post(`${url}`, list, header);
         newList.id = result.data.id;
         expect(result.status).toBe(201);
-    });
-    
-    test("Wrong id type", async () => {
-        try {
-            await axios.post(`${url}`, {...list, id_user: 'a'});
-        } catch(e) {
-            expect(e.response.status).toBe(400);
-        }
     });
 });
 
 describe("UPDATE LIST", () => {
     test("Correct call", async () => {
-        const result = await axios.put(`${url}/${newList.id}`, newList);
+        const result = await axios.put(`${url}/${newList.id}`, newList, header);
         expect(result.status).toBe(200);
     });
     
     test("Wrong id type", async () => {
         try {
-            await axios.put(`${url}/${newList.id}`, {...newList, id_user: 'a'});
+            await axios.put(`${url}/${newList.id}`, {...newList, id_user: 'a'}, header);
         } catch(e) {
             expect(e.response.status).toBe(400);
         }
@@ -95,13 +74,13 @@ describe("UPDATE LIST", () => {
 
 describe("DELETE LIST", () => {
     test("Correct call", async () => {
-        const result = await axios.delete(`${url}/${newList.id}`);
+        const result = await axios.delete(`${url}/${newList.id}`, header);
         expect(result.status).toBe(200);
     });
 
     test("Wrong id type", async () => {
         try {
-            await axios.delete(`${url}/a`);
+            await axios.delete(`${url}/a`, header);
         } catch(e) {
             expect(e.response.status).toBe(400);
         }

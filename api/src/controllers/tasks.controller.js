@@ -1,20 +1,11 @@
 const pool = require("../database");
 
-const getTasks = async (req, res) => {
-    try {
-        const query = "SELECT * FROM tasks";
-        const response = await pool.query(query);
-        return res.status(200).json(response.rows);
-    } catch(e) {
-        return res.status(500).json({message: "An internal error ocurred"});
-    }
-}
-
 const getTaskById = async (req, res) => {
     try {
         const id = Number(req.params.id);
-        const query = "SELECT * FROM tasks WHERE id = $1";
-        const response = await pool.query(query, [id]);
+        const idUser = Number(req.user.id);
+        const query = "SELECT * FROM tasks WHERE id=$1 AND id_user=$2";
+        const response = await pool.query(query, [id, idUser]);
         if(response.rows[0] == undefined) 
             return res.status(404).json({message: "There's no task with the given id"})
         return res.status(200).json(response.rows[0]);
@@ -27,9 +18,9 @@ const getTaskById = async (req, res) => {
 
 const getTaskByUserId = async (req, res) => {
     try {
-        const id_user = Number(req.params.id_user);
+        const idUser = Number(req.user.id);
         const query = "SELECT * FROM tasks WHERE id_user=$1";
-        const response = await pool.query(query, [id_user]);
+        const response = await pool.query(query, [idUser]);
         return res.status(200).json(response.rows);
     } catch (e) {
         if(e.code === "22P02") // Data type error
@@ -40,9 +31,10 @@ const getTaskByUserId = async (req, res) => {
 
 const getTaskByListId = async (req, res) => {
     try {
-        const id_list = Number(req.params.id_list);
-        const query = "SELECT * FROM tasks WHERE id_list=$1";
-        const response = await pool.query(query, [id_list]);
+        const idList = Number(req.params.id_list);
+        const idUser = Number(req.user.id);
+        const query = "SELECT * FROM tasks WHERE id_list=$1 AND id_user=$2";
+        const response = await pool.query(query, [idList, idUser]);
         return res.status(200).json(response.rows);
     } catch (e) {
         if(e.code === "22P02") // Data type error
@@ -53,10 +45,11 @@ const getTaskByListId = async (req, res) => {
 
 const createTask = async (req, res) => {
     try {
-        const {content, is_checked, color, date, id_user, id_list} = req.body;
+        const {content, is_checked, color, date, idList} = req.body;
+        const idUser = Number(req.user.id);      
         const query = `INSERT INTO tasks (content, is_checked, color, date, id_user, id_list) VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING id, content, is_checked, color, date, id_user, id_list`;
-        const response = await pool.query(query, [content, is_checked, color, date, id_user, id_list]);
+        const response = await pool.query(query, [content, is_checked, color, date, idUser, idList]);
         return res.status(201).json(response.rows[0]);
     } catch(e) {
         if(e.code === "22P02") // Data type error
@@ -69,12 +62,12 @@ const createTask = async (req, res) => {
 
 const updateTask = async (req, res) => {
     try {
-        const body = req.body;
         const id = Number(req.params.id);
-        const {content, is_checked, color, date, id_user, id_list} = req.body;
-        const query = `UPDATE tasks SET content=$1, is_checked=$2, color=$3, date=$4, id_user=$5, id_list=$6 WHERE id=$7
+        const idUser = Number(req.user.id);
+        const {content, is_checked, color, date, idList} = req.body;
+        const query = `UPDATE tasks SET content=$1, is_checked=$2, color=$3, date=$4, id_list=$5 WHERE id=$6 AND id_user=$7
             RETURNING id, content, is_checked, color, date, id_user, id_list`;
-        const response = await pool.query(query, [content, is_checked, color, date, id_user, id_list, id]);
+        const response = await pool.query(query, [content, is_checked, color, date, idList, id, idUser]);
         return res.status(200).json(response.rows[0]);
     } catch(e) {
         if(e.code === "22P02") // Data type error
@@ -88,8 +81,9 @@ const updateTask = async (req, res) => {
 const deleteTask = async (req, res) => {
     try {
         const id = Number(req.params.id);
-        const query = "DELETE FROM tasks WHERE id=$1";
-        const response = await pool.query(query, [id]);
+        const idUser = Number(req.user.id);
+        const query = "DELETE FROM tasks WHERE id=$1 AND id_user= $2";
+        await pool.query(query, [id, idUser]);
         return res.status(200).json({message: "Task deleted correctly"});
     } catch(e) {
         if(e.code === "22P02") // Data type error
@@ -99,7 +93,6 @@ const deleteTask = async (req, res) => {
 }
 
 module.exports = {
-    getTasks,
     getTaskById,
     getTaskByUserId,
     getTaskByListId,

@@ -4,8 +4,8 @@ const { authToken } = require('../utils/authUtils');
 
 const tasksRouter = Router();
 
+tasksRouter.get("/tasks/",authToken, getTaskByUserId);
 tasksRouter.get("/tasks/:id",authToken, getTaskById);
-tasksRouter.get("/tasks/user/:id_user",authToken, getTaskByUserId);
 tasksRouter.get("/tasks/list/:id_list",authToken, getTaskByListId);
 tasksRouter.post("/tasks", authToken, createTask);
 tasksRouter.put("/tasks/:id", authToken, updateTask);

@@ -7,7 +7,7 @@ execSync('sudo -u postgres psql -d schetime -f ../bd/createTriggers.sql');
 execSync('sudo -u postgres psql -d schetime -f ../bd/populateDatabase.sql');
 
 const userData = {
-    id: 6,
+    id: 1,
     username: "test", 
     email: "test@gmail.com",
     password: "1234"
@@ -17,10 +17,10 @@ require("dotenv").config();
 
 const token = jwt.sign(userData, process.env.ACCESS_TOKEN_SECRET);
 
-const user = {
-    username: userData.username,
-    email: userData.email,
-    token: token
-}
+const header = {
+    headers: {
+        Authorization: `Bearer ${token}`
+    }
+};
 
-module.exports = user;
+module.exports = header;

@@ -1,11 +1,5 @@
 const axios = require("axios");
-const user = require("../setUpTests");
-
-const header = {
-    headers: {
-        Authorization: `Bearer ${user.token}`
-    }
-};
+const header = require("../setUpTests");
 
 const url = "http://localhost:3000/tasks";
 
@@ -14,7 +8,6 @@ const task = {
     is_checked: false, 
     color: "blue", 
     date: "2021-07-31", 
-    id_user: 2, 
     id_list: 1
 };
 
@@ -23,9 +16,16 @@ const newTask = {
     is_checked: true, 
     color:"blue", 
     date: "2021-08-15", 
-    id_user: 2, 
     id_list: 1
 };
+
+describe("GET TASKS", () => {
+    test("Correct call", async () => {
+        const result = await axios.get(`${url}`, header);        
+        expect(result.status).toBe(200);
+    });
+});
+
 describe("GET TASKS BY ID", () => {
     test("Correct call", async () => {
         const result = await axios.get(`${url}/1`, header);        
@@ -46,26 +46,6 @@ describe("GET TASKS BY ID", () => {
         } catch(e){
             expect(e.response.status).toBe(404);
         }        
-    });
-});
-
-describe("GET TASKS BY USER ID", () => {
-    test("Correct call", async () => {
-        const result = await axios.get(`${url}/user/1`, header);        
-        expect(result.status).toBe(200);
-    });
-    
-    test("Wrong id type", async () => {
-        try {
-            await axios.get(`${url}/user/a`, header);
-        } catch(e) {
-            expect(e.response.status).toBe(400);
-        }
-    });
-    
-    test("Not existing id", async () => {
-        const result = await axios.get(`${url}/user/-1`, header);
-        expect(result.status).toBe(200);   
     });
 });
 
@@ -94,14 +74,6 @@ describe("CREATE TASK", () => {
         const result = await axios.post(url, task, header);  
         newTask.id = result.data.id;      
         expect(result.status).toBe(201);
-    });
-    
-    test("Wrong id type", async () => {
-        try {
-            await axios.post(url, {...task, id_user: "a"}, header);
-        } catch(e) {
-            expect(e.response.status).toBe(400);
-        }
     });
     
     test("Wrong date format", async () => {
