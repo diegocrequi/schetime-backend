@@ -9,8 +9,9 @@ CREATE TYPE COLOR_ENUM AS ENUM ('red', 'green', 'blue', 'yellow', 'pink', 'orang
 CREATE TABLE users (
     id SERIAL PRIMARY KEY NOT NULL,
     username VARCHAR(100) NOT NULL,
-    email VARCHAR(254) NOT NULL UNIQUE,
-    password VARCHAR(100) NOT NULL
+    email VARCHAR(254) NOT NULL,
+    password VARCHAR(100) NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT true
 );
 
 CREATE TABLE lists (
@@ -19,6 +20,7 @@ CREATE TABLE lists (
     datable BOOLEAN NOT NULL,
     checkable BOOLEAN NOT NULL,
     color COLOR_ENUM NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT true,
     id_user INTEGER REFERENCES users(id) NOT NULL
 );
 
@@ -28,6 +30,7 @@ CREATE TABLE tasks (
     is_checked BOOLEAN,
     color COLOR_ENUM,
     date DATE,
-    id_user INTEGER REFERENCES users(id) NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT true,
+    id_user INTEGER REFERENCES users(id),
     id_list INTEGER REFERENCES lists(id)
 );

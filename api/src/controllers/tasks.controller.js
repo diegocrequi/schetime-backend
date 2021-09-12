@@ -4,7 +4,7 @@ const getTaskById = async (req, res) => {
     try {
         const id = Number(req.params.id);
         const idUser = Number(req.user.id);
-        const query = "SELECT * FROM tasks WHERE id=$1 AND id_user=$2";
+        const query = "SELECT * FROM tasks WHERE id=$1 AND id_user=$2 AND active=true";
         const response = await pool.query(query, [id, idUser]);
         if(response.rows[0] == undefined) 
             return res.status(404).json({message: "There's no task with the given id"})
@@ -19,7 +19,7 @@ const getTaskById = async (req, res) => {
 const getTaskByUserId = async (req, res) => {
     try {
         const idUser = Number(req.user.id);
-        const query = "SELECT * FROM tasks WHERE id_user=$1";
+        const query = "SELECT * FROM tasks WHERE id_user=$1 AND active=true";
         const response = await pool.query(query, [idUser]);
         return res.status(200).json(response.rows);
     } catch (e) {
@@ -33,7 +33,7 @@ const getTaskByListId = async (req, res) => {
     try {
         const idList = Number(req.params.id_list);
         const idUser = Number(req.user.id);
-        const query = "SELECT * FROM tasks WHERE id_list=$1 AND id_user=$2";
+        const query = "SELECT * FROM tasks WHERE id_list=$1 AND id_user=$2 AND active=true";
         const response = await pool.query(query, [idList, idUser]);
         return res.status(200).json(response.rows);
     } catch (e) {
@@ -82,7 +82,7 @@ const deleteTask = async (req, res) => {
     try {
         const id = Number(req.params.id);
         const idUser = Number(req.user.id);
-        const query = "DELETE FROM tasks WHERE id=$1 AND id_user= $2";
+        const query = "UPDATE tasks SET active=false WHERE id=$1 AND id_user=$2";
         await pool.query(query, [id, idUser]);
         return res.status(200).json({message: "Task deleted correctly"});
     } catch(e) {

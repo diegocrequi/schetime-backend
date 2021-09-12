@@ -4,7 +4,7 @@ const getListById = async (req, res) => {
     try {
         const id = Number(req.params.id);
         const idUser = Number(req.user.id);
-        const query = "SELECT * FROM lists WHERE id=$1 AND id_user=$2";
+        const query = "SELECT * FROM lists WHERE id=$1 AND id_user=$2 AND active=true";
         const response = await pool.query(query, [id, idUser]);
         if(response.rows[0] == undefined) 
             return res.status(404).json({message: "There's no list with the given id"});
@@ -19,7 +19,7 @@ const getListById = async (req, res) => {
 const getListByUserId = async (req, res) => {
     try {
         const idUser = Number(req.user.id);
-        const query = "SELECT * FROM lists WHERE id_user=$1";
+        const query = "SELECT * FROM lists WHERE id_user=$1 AND active=true";
         const response = await pool.query(query, [idUser]);
         return res.status(200).json(response.rows[0]);
     } catch(e) {
@@ -65,7 +65,7 @@ const deleteList = async (req, res) => {
     try {
         const id = Number(req.params.id);
         const idUser = Number(req.user.id);
-        const query = "DELETE FROM lists WHERE id=$1 AND id_user=$2";
+        const query = "UPDATE lists SET active=false WHERE id=$1 AND id_user=$2";
         await pool.query(query, [id, idUser]);
         return res.status(200).json({message: "List deleted correctly"});
     } catch(e) {

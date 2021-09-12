@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { signUp, logIn, updateUserData, deleteUser, updateUserPassword } = require("../controllers/user.controller");
+const { signUp, logIn, updateUserData, deleteUser, updateUserPassword } = require("../controllers/users.controller");
 const { authToken } = require("../utils/authUtils");
 
 const usersRouter = Router();

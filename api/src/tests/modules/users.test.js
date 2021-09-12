@@ -38,14 +38,21 @@ const initUser = async () => {
 beforeAll(() => initUser());
 
 describe("SIGN UP", () => {
+    let headerTest;
+
     test("Correct call", async () => {
         const response = await axios.post(`${url}/signup`, userTest);
+        headerTest = {
+            headers: {
+                Authorization: `Bearer ${response.data.token}`
+            }
+        };
         expect(response.status).toBe(201);
     });
 
     test("Data with whitespaces", async () => {
         try {
-            const response = await axios.post(`${url}/signup`, {...userTest, username: "wrongUser    "});
+            await axios.post(`${url}/signup`, {...userTest, username: "wrongUser    "});
         } catch(e) {
             expect(e.response.status).toBe(400);
         }
@@ -53,10 +60,16 @@ describe("SIGN UP", () => {
 
     test("Duplicated user", async () => {
         try {
-            const response = await axios.post(`${url}/signup`, userTest);
+            await axios.post(`${url}/signup`, userTest);
         } catch(e) {
             expect(e.response.status).toBe(409);
         }
+    });
+
+    test("Check active uniqueness", async () => {
+        await axios.delete(`${url}/users`, headerTest);
+        const response = await axios.post(`${url}/signup`, userTest);
+        expect(response.status).toBe(201);
     });
 });
 

@@ -15,8 +15,9 @@ const signUp = async (req, res) => {
             email
         });
     } catch(e) {
-        if(e.code === "23505")
-            return res.status(409).json({message: "Email already exists"});
+        if(e.code === "P0001")
+            return res.status(409).json({message: "Username already exists"});
+        console.log(e)
         return res.status(500).json({message: "An internal error ocurred"});
     }
 }
@@ -26,7 +27,7 @@ const logIn = async (req, res) => {
         const {username, password} = req.body;
         if(username.indexOf(" ") !== -1)
             return res.status(400).json({message: "Neither username nor email can contains whitespaces"})
-        const query = "SELECT id, username, email FROM users WHERE username=$1 AND password=$2";
+        const query = "SELECT id, username, email FROM users WHERE username=$1 AND password=$2 AND active=true";
         const response = await pool.query(query, [username, password]);
         if(response.rows.length === 0) 
             return res.status(401).json({message: "Incorrect username or password"});
@@ -80,7 +81,7 @@ const updateUserPassword = async (req, res) => {
 const deleteUser = async (req, res) => {
     try {
         const id = Number(req.user.id);
-        const query = "DELETE FROM users WHERE id=$1";
+        const query = "UPDATE users SET active=false WHERE id=$1";
         await pool.query(query, [id]);
         return res.status(200).json({message: "User deleted correctly"});
     } catch(e) {
