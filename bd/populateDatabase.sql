@@ -2,7 +2,7 @@ DELETE FROM tasks;
 DELETE FROM lists;
 DELETE FROM users;
 
-INSERT INTO users (username, email, password) VALUES ('test', 'test@gmail.com', '1234');
+INSERT INTO users (username, email, password) VALUES ('test', 'test@gmail.com', '$2b$10$G2PvA/kBNsE0G.wuqOs6hukmdj6z4c.xKt1OrXPrLlzxVloNxbHEC');
 
 INSERT INTO lists (name, datable, checkable, color, id_user) VALUES ('Birthdays', true, false, 'red', 1);
 
